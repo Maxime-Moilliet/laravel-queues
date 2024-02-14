@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\RegisterUserEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
-use App\Mail\RegisterUserMail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 final class RegisterUserController extends Controller
 {
@@ -22,7 +21,7 @@ final class RegisterUserController extends Controller
             'password' => Hash::make(strval($request->get('password'))),
         ]);
 
-        Mail::to($user)->send(new RegisterUserMail($user));
+        RegisterUserEvent::dispatch($user);
 
         return redirect()->back();
     }
